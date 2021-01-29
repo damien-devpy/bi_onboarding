@@ -19,13 +19,13 @@
 
 from __future__ import unicode_literals
 
-
-from weboob.browser.pages import HTMLPage, LoggedPage, pagination
-from weboob.browser.elements import method, ListElement, ItemElement, TableElement
-from weboob.capabilities.bank import Account, Transaction
-from weboob.browser.filters.standard import CleanText, CleanDecimal, Regexp, Currency, MapIn, Field, Date
-from weboob.exceptions import BrowserIncorrectPassword
 import re
+
+from weboob.browser.elements import ItemElement, ListElement, TableElement, method
+from weboob.browser.filters.standard import CleanDecimal, CleanText, Currency, Date, Field, Regexp
+from weboob.browser.pages import HTMLPage, LoggedPage, pagination
+from weboob.capabilities.bank import Account, Transaction
+from weboob.exceptions import BrowserIncorrectPassword
 
 
 class LoginPage(HTMLPage):
