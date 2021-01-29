@@ -15,3 +15,4 @@ modules/modules.list
 *.coverage*
 .vscode/
 geckodriver.log
+modules/webastro
