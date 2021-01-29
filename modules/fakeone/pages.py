@@ -68,13 +68,14 @@ class HistoryAccount(LoggedPage, HTMLPage):
         def next_page(self):
             match = re.search(r'Page (\d)/(\d)', CleanText('.')(self))
 
-            current = match.group(1)
-            last = match.group(2)
+            if match:
+                current = match.group(1)
+                last = match.group(2)
 
-            if int(current) < int(last):
-                next_one = str(int(current) + 1)
-
-                return self.page.url.replace(f"{self.page.PAGINATION}" + current, f"{self.page.PAGINATION}" + next_one)
+                if int(current) < int(last):
+                    next_one = str(int(current) + 1)
+                    
+                    return self.page.url.replace(f"{self.page.PAGINATION}" + current, f"{self.page.PAGINATION}" + next_one)
 
         class item(ItemElement):
             klass = Transaction
