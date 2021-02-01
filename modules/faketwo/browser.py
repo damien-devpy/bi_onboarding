@@ -21,28 +21,28 @@ from __future__ import unicode_literals
 
 
 from weboob.browser import LoginBrowser, URL, need_login
-from .pages import LoginPage, AccountsPage, HistoryAccount
+from weboob.browser.exceptions import ClientError
+from weboob.exceptions import BrowserIncorrectPassword, BrowserHTTPError
+from .pages import LoginPage, AccountsPage
 
-class FakeoneBrowser(LoginBrowser):
-    BASEURL = 'https://people.lan.budget-insight.com/~ntome/fake_bank.wsgi/v1/'
 
-    login = URL(r'login', LoginPage)
-    history_account = URL(r'accounts/(?P<account_id>.*)\?page=(?P<page_id>[0-9]*)', HistoryAccount)
-    accounts = URL(r'accounts', AccountsPage)
+class FaketwoBrowser(LoginBrowser):
+    BASEURL = 'https://people.lan.budget-insight.com/~ntome/fake_bank.wsgi/v2/'
+
+    login = URL(r'login.json', LoginPage)
+    accounts = URL(r'accounts.json', AccountsPage)
 
     def do_login(self):
-        self.login.go()
-        self.page.do_login(self.username, self.password)
-
-        if self.login.is_here():
-            self.page.check_invalid_credentials()
+        try:
+            self.login.go(data={'login': self.username, 'password': self.password})
+        except ClientError as err:
+            if err.response.status_code == '401':
+                raise BrowserIncorrectPassword(err)
+            else:
+                raise BrowserHTTPError(err)
 
     @need_login
     def iter_accounts(self):
         self.accounts.go()
-        return self.page.iter_accounts()
 
-    @need_login
-    def iter_history(self, account):
-        self.history_account.go(account_id=account.id, page_id=1)
-        return self.page.iter_history()
+    
